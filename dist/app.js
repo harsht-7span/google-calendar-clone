@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const createEventButton = document.getElementById("createEventButton");
   const eventForm = document.getElementById("eventForm");
   const closeFormButton = document.getElementById("closeFormButton");
+  const eventList = document.getElementById("eventList");
+  const clearBtn = document.getElementById("clearBtn");
 
   let imgNum;
 
@@ -53,20 +55,54 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const eventDiv = document.createElement("div");
 
-    eventDiv.textContent = eventTitle.value + " : " + eventDate.value;
+    // eventDiv.textContent = eventTitle.value + " : " + eventDate.value;
 
-    // Styling the Event div
-    eventDiv.style.backgroundColor = "#dadada";
-    eventDiv.style.textAlign = "center";
-    eventDiv.style.borderRadius = "5px";
-    eventList.appendChild(eventDiv);
+    // // Styling the Event div
+    // // eventDiv.style.textAlign = "center";
+    // eventDiv.style.backgroundColor = "  green";
+    // eventDiv.style.color = "white";
+    // eventDiv.style.fontWeight = "bold";
+    // eventDiv.style.borderRadius = "5px";
+    // eventDiv.style.padding = "10px";
+    // eventList.appendChild(eventDiv);
 
     //creating objects to store the data
     const eventData = {
       title: eventTitle.value,
       data: eventDate.value,
     };
+    saveEvents(eventData);
+    location.reload();
   });
+
+  function saveEvents(eventData) {
+    const events = JSON.parse(localStorage.getItem("events")) || [];
+    events.push(eventData);
+    localStorage.setItem("events", JSON.stringify(events));
+  }
+
+  function displayEventsFromLocalStorage() {
+    const events = JSON.parse(localStorage.getItem("events")) || [];
+    events.forEach((event) => {
+      const eventDiv = document.createElement("div");
+      eventDiv.textContent = event.title + " : " + event.data;
+      eventDiv.style.backgroundColor = "  green";
+      eventDiv.style.color = "white";
+      eventDiv.style.fontWeight = "bold";
+      eventDiv.style.borderRadius = "5px";
+      eventDiv.style.padding = "5px";
+      eventList.appendChild(eventDiv);
+    });
+    // conditional display of clear all btn
+    if (events.length === 0) {
+      clearBtn.classList.add("hidden");
+    } else {
+      clearBtn.classList.remove("hidden");
+    }
+  }
+
+  // Display events from localStorage when the page loads
+  window.addEventListener("load", displayEventsFromLocalStorage);
 
   function renderCalendar(date) {
     currentMonth.textContent = date.toLocaleString("default", {
@@ -107,6 +143,9 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById(
           "cal-img"
         ).src = `https://ssl.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_${imgNum}_2x.png`;
+        document.getElementById(
+          "titleIcon"
+        ).href = `https://ssl.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_${imgNum}_2x.png`;
       }
       dayElement.addEventListener("mouseover", function () {
         if (i === today.getDate()) {
